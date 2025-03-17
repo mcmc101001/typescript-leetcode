@@ -1,4 +1,5 @@
 import type { Equal, Expect } from "@type-challenges/utils";
+import { Add, Push, Subtract } from "./utils";
 
 // Test cases
 type A1 = TwoSum<[2, 7, 11, 15], 9>;
@@ -43,29 +44,6 @@ type IndexOf<
     : IndexOf<Tail, V, [...Count, 1]>
   : -1;
 
-type Add<T extends number, U extends number> = [
-  ...CreateCountArray<T>,
-  ...CreateCountArray<U>
-]["length"] extends infer R
-  ? R extends number
-    ? R
-    : never
-  : never;
-
-type Subtract<
-  T extends number,
-  U extends number
-> = CreateCountArray<T> extends [...CreateCountArray<U>, ...infer R]
-  ? R["length"]
-  : never;
-
-type CreateCountArray<
-  T extends number,
-  R extends 1[] = []
-> = R["length"] extends T ? R : CreateCountArray<T, Push<R, 1>>;
-
-type Push<T extends unknown[], V> = [...T, V];
-
 // Test sub-functions
 type TestIndexOf = [
   Expect<Equal<IndexOf<[2, 7, 11, 15], 7>, 1>>,
@@ -75,19 +53,4 @@ type TestIndexOf = [
 
   // @ts-expect-error
   Expect<Equal<IndexOf<[3, 3, 6], never>, never>>
-];
-
-type TestPush = [
-  Expect<Equal<Push<[], 1>, [1]>>,
-  Expect<Equal<Push<[1], 2>, [1, 2]>>
-];
-
-type TestCreateCountArray = [
-  Expect<Equal<CreateCountArray<3>, [1, 1, 1]>>,
-  Expect<Equal<CreateCountArray<0>, []>>
-];
-
-type TestSubtract = [
-  Expect<Equal<Subtract<3, 1>, 2>>,
-  Expect<Equal<Subtract<3, 3>, 0>>
 ];
